@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOST ＆ FOUND</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header glass">
+  <h1>🏷️LOST＆FOUND</h1>
+  <div id="userInfo">
+    <button class="btn btn-default" onclick="showLogin()">Login</button>
+    <button class="btn btn-primary" onclick="showReg()">Signup</button>
+  </div>
+</div>
+
+<div id="regPage" class="hidden">
+    <div class="card auth-card">
+      <h3>User Registration</h3>
+      <div class="form-item">
+        <label>Username</label>
+        <input type="text" id="regUser" placeholder="Please input username">
+      </div>
+      <div class="form-item">
+        <label>Password</label>
+        <input type="password" id="regPwd" placeholder="Please input password">
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="reg()">Signup</button>
+      <p style="text-align: center; margin-top: 20px;">
+        Already have an account?<a href="javascript:showLogin()" style="color: #2c74e8; text-decoration: none; font-weight: 500;">Login now</a>
+      </p>
+    </div>
+  </div>
+
+<div class="container">
+  <div id="loginPage">
+    <div class="card auth-card">
+      <h3>User Login</h3>
+      <div class="form-item">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Please input username">
+      </div>
+      <div class="form-item">
+        <label>Password</label>
+        <input type="password" id="loginPwd" placeholder="Please input password">
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+      <p style="text-align: center; margin-top: 20px;">
+        Still no account?<a href="javascript:showReg()" style="color: #2c74e8; text-decoration: none; font-weight: 500;">Sign up now</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="mainPage" class="hidden">
+    <div style="margin-bottom: 30px; text-align: center;">
+      <button class="btn btn-warning" onclick="openPost('lost')">📛 Upload the lost items</button>
+      <button class="btn btn-success" onclick="openPost('found')">✅ Upload the found items</button>
+      <button class="btn btn-primary" onclick="openMsg()">💌 My Private Message</button>
+      <button class="btn btn-default" onclick="clearStorage()">🗑️ Clean Cache</button>
+        <!-- New: MySendings and BackstageManagement-->
+      <button class="btn btn-default" onclick="openMyPosts()">📋 My Posts</button>
+      <button class="btn btn-danger" id="adminBtn" style="display: none;" onclick="openAdminPanel()">⚙️ BackstageManagement</button>
+    </div>
+  
+    <div class="search-wrapper">
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Input keywords to search(Title/description/label/characteristic...)">
+        <span class="search-icon">🔍</span>
+        <button class="btn btn-primary" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); height: 40px; width: 100px;" onclick="performSearch()">SEARCH</button>
+      </div>
+      
+      <div class="filter-group" id="filterGroup">
+        <div class="filter-header">
+          <h3>🎛️ More Filting</h3>
+          <div class="filter-actions">
+            <button class="btn btn-default" onclick="resetFilter()">Reset Filter</button>
+          </div>
+        </div>
+        
+        <div class="filter-row">
+          <div class="filter-col">
+            <label>Item Size</label>
+            <select id="sizeFilter">
+              <option value="">-- Please Select: --</option>
+              <option value="Tiny">Tiny(Smaller than your palm)</option>
+              <option value="Small">Small</option>
+              <option value="Middle">Middle</option>
+              <option value="Large">Large</option>
+            </select>
+          </div>
+          <div class="filter-col">
+            <label>Weight Range(kg)></label>
+            <div class="weight-range">
+              <input type="number" id="weightMin" placeholder="Minimum" min="0">
+              <span>-</span>
+              <input type="number" id="weightMax" placeholder="Maximum" min="0">
+            </div>
+          </div>
+          <div class="filter-col">
+            <label>Type of object</label>
+            <select id="typeFilter">
+              <option value="">Click me to choose</option>
+              <option value="Books">Books</option>
+              <option value="Electronic Devices">Electrionic Device</option>
+              <option value="Cosmetics">Cosmetics(Compact/Lipstick/...)</option>
+              <option value="Decorations">Decorations</option>
+              <option value="Soft Container">Soft Container(Backpack/Handbag/...)</option>
+              <option value="Hard Container">Hard Contiainer(Kettle/Luggage/...)</option>
+              <option value="Study Tools">Study Tools</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="filter-row">
+          <div class="filter-col">
+            <label>Colour</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px;">
+              <label class="color-option"><input type="checkbox" value="Red"> Red</label>
+              <label class="color-option"><input type="checkbox" value="Blue"> Blue</label>
+              <label class="color-option"><input type="checkbox" value="Black"> Black</label>
+              <label class="color-option"><input type="checkbox" value="White"> White</label>
+              <label class="color-option"><input type="checkbox" value="Yellow"> Yellow</label>
+              <label class="color-option"><input type="checkbox" value="Green"> Green</label>
+            </div>
+          </div>
+          <div class="filter-col">
+            <label>TYPE OF POST</label>
+            <select id="postTypeFilter">
+              <option value="">CHOOSE</option>
+              <option value="lost">LOST</option>
+              <option value="found">FOUND</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 20px; color: #333;">🔍LOST</h3>
+      <div id="lostList" class="post-list"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 20px; color: #333;">✅FOUND</h3>
+      <div id="foundList" class="post-list"></div>
+    </div>
+  </div>
+
+ <div id="searchResultPage" class="hidden">
+    <button class="btn btn-default back-btn" onclick="backToMain()">← Return to the Main Page</button>
+    <div class="card">
+      <h3 style="margin-bottom: 20px; color: #333;">🔍 Search Result</h3>
+      <div id="searchResultList" class="post-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="postOverlay"></div>
+<div class="modal hidden" id="postModal">
+  <h3 id="postModalTitle" style="margin-bottom: 25px; color: #333;">Post a Thread</h3>
+  <input type="hidden" id="postType">
+  <div class="form-item">
+    <label>Title</label>
+    <input type="text" id="postTitle" placeholder="e.g. Lost black wallet(including ID card and bank card)">
+  </div>
+  <div class="form-item">
+    <label>Description</label>
+    <textarea id="postDesc" placeholder="Please describe the characteristic of items, lost/found time, etc"></textarea>
+  </div>
+  
+  <div class="form-item">
+    <label>Size</label>
+    <select id="postSize">
+      <option value="Tiny">Tiny(Smaller than your palm)</option>
+      <option value="Small">Small</option>
+      <option value="Middle">Middle</option>
+      <option value="Large">Large</option>
+    </select>
+  </div>
+  <div class="form-item">
+    <label>Weight(kg)</label>
+    <input type="number" id="postWeight" placeholder="Please input the weight of items(kg)" min="0" step="0.01">
+  </div>
+  <div class="form-item">
+    <label>Colour</label>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <label class="color-option"><input type="checkbox" value="Red" id="colorRed"> Red</label>
+      <label class="color-option"><input type="checkbox" value="Blue" id="colorBlue"> Blue</label>
+      <label class="color-option"><input type="checkbox" value="Black" id="colorBlack"> Black</label>
+      <label class="color-option"><input type="checkbox" value="White" id="colorWhite"> White</label>
+      <label class="color-option"><input type="checkbox" value="Yellow" id="colorYellow"> Yellow</label>
+      <label class="color-option"><input type="checkbox" value="Green" id="colorGreen"> Green</label>
+    </div>
+  </div>
+  <div class="form-item">
+    <label>Type</label>
+    <select id="postCategory">
+      <option value="Books">Books</option>
+      <option value="Electronic Devices">electrionic device</option>
+      <option value="Cosmetics">Cosmetics(Compact/Lipstick/...)</option>
+      <option value="Decorations">Decorations</option>
+      <option value="Soft Container">Soft Container(Backpack/Handbag/...)</option>
+      <option value="Hard Container">Hard Contiainer(Kettle/Luggage/...)</option>
+      <option value="Study Tools">Study Tools</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+  
+  <div class="form-item">
+  <label>Upload Image</label>
+  <div style="position: relative; display: inline-block;">
+    <button class="btn btn-default">Choose File</button>
+    <input type="file" id="postImg" accept="image/*" style="position: absolute; top: 0; left: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
+  </div>
+</div>
+  <div class="form-item">
+    <label>Label(separated by comma)</label>
+    <input type="text" id="postTags" placeholder="e.g. Wallet, ID card, Octopus, etc">
+  </div>
+  <div class="form-item">
+    <label>Province/state</label>
+    <select id="province" onchange="loadCity()"></select>
+  </div>
+  <div class="form-item">
+    <label>City</label>
+    <select id="city" onchange="loadArea()"></select>
+  </div>
+  <div class="form-item">
+    <label>Area</label>
+    <select id="area"></select>
+  </div>
+  <div class="form-item">
+    <label>Address</label>
+    <input type="text" id="detailAddr" placeholder="e.g. A city, B community, C building">
+  </div>
+  <div style="display: flex; gap: 15px; margin-top: 30px;">
+    <button class="btn btn-primary" id="submitPostBtn" onclick="submitPost()">SEND</button>
+    <button class="btn btn-default" onclick="closePost()">DELETE</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="detailOverlay"></div>
+<div class="modal hidden" id="detailModal" style="max-width: 800px;">
+  <div id="detailContent"></div>
+  <button class="btn btn-default" style="margin-top: 30px; width: 100%;" onclick="closeDetail()">CLOSE</button>
+</div>
+
+<!-- New: Backstage Management Window -->
+<div class="overlay hidden" id="adminOverlay"></div>
+<div class="modal hidden" id="adminModal" style="max-width: 900px;">
+  <h3 style="margin-bottom: 20px;">⚙️ Backstage Management - Post Pending</h3>
+  <div style="margin-bottom: 15px;">
+    <button class="btn btn-default" onclick="loadAdminPosts('all')">All</button>
+    <button class="btn btn-warning" onclick="loadAdminPosts('pending')">Pending</button>
+    <button class="btn btn-success" onclick="loadAdminPosts('approved')">Approved</button>
+    <button class="btn btn-danger" onclick="loadAdminPosts('rejected')">Rejected</button>
+  </div>
+  <div id="adminPostList" style="max-height: 60vh; overflow-y: auto;"></div>
+  <button class="btn btn-default" style="margin-top: 20px; width: 100%;" onclick="closeAdminPanel()">CLOSE</button>
+</div>
+
+<!-- New: My Post Window -->
+<div class="overlay hidden" id="myPostsOverlay"></div>
+<div class="modal hidden" id="myPostsModal" style="max-width: 700px;">
+  <h3 style="margin-bottom: 20px;">📋 MyPost</h3>
+  <div id="myPostsList" style="max-height: 60vh; overflow-y: auto;"></div>
+  <button class="btn btn-default" style="margin-top: 20px; width: 100%;" onclick="closeMyPosts()">CLOSE</button>
+</div>
+
+
+<div class="overlay hidden" id="msgOverlay"></div>
+<div class="modal hidden" id="msgModal" style="max-width: 900px;">
+  <h3 style="margin-bottom: 25px; color: #333;">💬 Private Contact</h3>
+  <div class="chat-container">
+    <div class="chat-list" id="chatList"></div>
+    <div class="chat-content">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div style="margin-bottom: 15px;">
+        <input type="file" id="chatImg" accept="image/*" style="display: none;" onchange="previewChatImg()">
+        <button class="btn btn-default" style="padding: 8px 15px;" onclick="document.getElementById('chatImg').click()">📷 Upload Imagine</button>
+        <div id="imgPreview" style="margin-top: 10px; max-height: 100px; overflow: hidden;"></div>
+      </div>
+      <div style="display: flex; gap: 15px;">
+        <textarea id="msgInput" placeholder="Input message..." style="flex: 1;"></textarea>
+        <button class="btn btn-primary" onclick="sendChatMsg()">SEND</button>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-default" style="margin-top: 20px;" onclick="closeMsg()">Close Contact</button>
+  <input type="hidden" id="currentChatUser">
+  <input type="hidden" id="tempChatImgUrl">
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
